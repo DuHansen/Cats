@@ -250,3 +250,43 @@
   transition: all 0.1s;
   min-width: 8rem;
 }
+
+/* Dropdown menu */
+.relative {
+  position: relative;
+}
+
+.relative > .absolute {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  text-align: center;
+  min-width: 8rem;
+}
+
+.relative ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.relative li {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #333;
+  transition: background-color 0.3s ease;
+}
+
+.relative li:hover {
+  border: 2px solid black; /* Define uma borda preta */
+  background-color: #ffffff; /* Fundo branco no hover */
+  color: black; /* Texto preto */
+  border-radius: 10px; /* Cantos levemente arredondados */
+}
+

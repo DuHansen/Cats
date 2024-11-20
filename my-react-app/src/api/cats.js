@@ -41,7 +41,20 @@ export function EDITAR_POSTAGEM(token, id) {
     headers: {
       Authorization: `Bearer ${token}`, 
       'Content-Type': 'application/json', 
-    },
+    }
   };
   return { url, options };
 }
+
+export const CRIAR_POSTAGEM = (token, formData) => {
+  const url = `${MY_URL}`; 
+  const options = {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(formData)
+  };
+  return { url, options };
+}
+

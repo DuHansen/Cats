@@ -1,4 +1,5 @@
 .StyledFeedPhotosItem {
+  justify-content: center;
   display: grid;
   grid-template-rows: auto 1fr;
   border-radius: 0.5rem;
@@ -17,7 +18,6 @@
 }
 
 .StyledImage {
-  background-color: black;
   width: 300px;
   height: 300px;
 }

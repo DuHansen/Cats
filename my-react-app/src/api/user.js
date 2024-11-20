@@ -79,32 +79,33 @@ export const desbloq_users = (token, id) => {
 
 export const add_admin = (token, userData) => {
   return {
-    url: `${API_URL}admin`,  // Ajuste a URL conforme necessário (caso precise adicionar o ID ou outro dado)
+    url: `${API_URL}admin`,  // A URL para o admin
     options: {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(userData),  // Passando os dados do usuário (como id, nome, email, etc.)
+      body: JSON.stringify(userData),  // Passando os dados do usuário (como nome, email, etc.)
     },
   };
 };
-
 
 export const add_view = (token, userData) => {
   return {
-    url: `${API_URL}`,  
+    url: `${API_URL}`,  // A URL para o view
     options: {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(userData),  // Passando os dados do usuário (como id, nome, email, etc.)
+      body: JSON.stringify(userData),  // Passando os dados do usuário (como nome, email, etc.)
     },
   };
 };
+
+
 
 
 export const edit_users = (token, id) => {
