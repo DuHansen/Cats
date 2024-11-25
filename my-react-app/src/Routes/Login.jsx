@@ -2,10 +2,10 @@ import React, { useContext } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import UserContext from '../context/UserContext'; // Importa corretamente o UserContext
 
-//import LoginCreate from './LoginCreate';
 import LoginForm from './LoginForm';
 import LoginPasswordLost from './LoginPasswordLost';
 import LoginPasswordReset from './LoginPasswordReset';
+import LoginPasswordVerifica from './LoginPasswordVerifica';
 import NotFound from './NotFound';
 
 function Login() {
@@ -18,6 +18,7 @@ function Login() {
         <Routes>
           <Route path='/' element={<LoginForm />} />
           <Route path='perdeu' element={<LoginPasswordLost />} />
+          <Route path='verifica' element={<LoginPasswordVerifica />} />
           <Route path='resetar' element={<LoginPasswordReset />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

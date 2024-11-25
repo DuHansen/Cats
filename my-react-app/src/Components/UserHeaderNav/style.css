@@ -41,6 +41,20 @@
   fill: #fb1;
 }
 
+/* Adicionando ajuste para o botão de Logout */
+.StyledHeaderUserNav button.logout-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px; /* Tamanho adequado para o botão */
+  width: 40px;  /* Tamanho adequado para o botão */
+}
+
+.StyledHeaderUserNav button.logout-button img {
+  max-width: 20px;  /* Garantir que a imagem do ícone tenha um tamanho adequado */
+  max-height: 20px; /* Garantir que a imagem do ícone tenha um tamanho adequado */
+}
+
 /* Estilos para a visualização mobile */
 .StyledHeaderUserNav.mobile {
   display: block;

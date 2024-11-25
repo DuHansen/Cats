@@ -24,6 +24,24 @@ class UserController {
         return userValue;
     }
 
+    async initializeAdmin() {
+        try {
+          console.log('Verificando usuário admin...');
+          const adminEmail = process.env.ADMIN_EMAIL;
+          const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
+          const adminUser = await User.create({
+            name: process.env.ADMIN_NAME,
+            email: adminEmail,
+            password: hashedPassword,
+            role: process.env.ADMIN_ROLE,
+          });
+      
+          console.log('Usuário admin criado com sucesso:', adminUser.email);
+        } catch (error) {
+          console.error('Erro ao criar usuário admin:', error.message);
+        }
+      }
+    
     async findUser(id, isDelete = false) {
         if (id === undefined) {
             throw new Error("Id é obrigatório.");
@@ -85,19 +103,16 @@ class UserController {
             }
           }
         
-        async updateSenha(id, hashedPassword) {
+          async updateSenha(userId, hashedPassword) {
             try {
-              const user = await User.findByPk(id);
-              if (!user) {
-                throw new Error('Usuário não encontrado');
-              }
-              await user.update({ password: hashedPassword });
-              return user;
+              await User.update({ password: hashedPassword }, { where: { id: userId } });
+              console.log(`Senha atualizada para o usuário com ID: ${userId}`);
             } catch (error) {
-              console.error('Erro ao atualizar senha:', error);
+              console.error('Erro ao atualizar senha no banco de dados:', error);
               throw new Error('Erro ao atualizar senha');
             }
           }
+          
         
 
     async login(email, password) {

@@ -178,55 +178,67 @@ class UserApi {
             // Enviar o código para o email do usuário
             await UserController.sendAccessCode(email, codigoAcesso);
 
-            res.status(200).json({ message: 'Código enviado com sucesso.' });
+            res.status(200).json({ success: true, message: 'Código enviado com sucesso.' })
         } catch (e) {
             res.status(400).json({ error: e.message });
         }
     }
 
     async validateAccessCode(req, res) {
-        const { userId, codigoAcesso } = req.body;
-        if (!userId || !codigoAcesso) {
+        const { email, codigoAcesso } = req.body;
+    
+        if (!email || !codigoAcesso) {
             return res.status(400).json({ error: 'Campos obrigatórios ausentes.' });
         }
-
+    
         try {
-            const accessCode = await UserController.validateAccessCode(Number(userId), codigoAcesso);
+            const user = await UserController.findUm(email);
+            if (!user) {
+                return res.status(404).json({ error: 'Usuário não encontrado.' });
+            }
+            console.log(user);
+            const accessCode = await UserController.validateAccessCode(user, codigoAcesso);
+    
+
             res.status(200).json({ message: 'Código válido.', accessCode });
         } catch (e) {
             res.status(400).json({ error: e.message });
         }
     }
+    
 
 
     async atualizarSenha(req, res) {
-        const { email, newPassword } = req.body;
-    
-        // Verificar se email e nova senha foram enviados
-        if (!email || !newPassword) {
-          return res.status(400).json({ error: 'Email e nova senha são obrigatórios' });
+        const { login, key, password } = req.body;
+      
+        if (!login || !key || !password) {
+          return res.status(400).json({ error: 'Campos obrigatórios ausentes.' });
         }
-    
+      
         try {
-          // Buscar o ID do usuário pelo email
-          const userId = await UserController.findUm(email);
-    
+          // Buscar o usuário pelo login
+          const userId = await UserController.findUm(login);
+      
           if (!userId) {
-            return res.status(404).json({ error: 'Usuário não encontrado' });
+            return res.status(404).json({ error: 'Usuário não encontrado.' });
           }
-    
+      
+          // Validar o código de acesso
+          await UserController.validateAccessCode(userId, key);
+      
           // Criptografar a nova senha
-          const hashedPassword = await bcrypt.hash(newPassword, 10);
-    
-          // Atualizar a senha usando o ID
+          const hashedPassword = await bcrypt.hash(password, 10);
+      
+          // Atualizar a senha
           await UserController.updateSenha(userId, hashedPassword);
-    
-          return res.status(200).json({ message: 'Senha atualizada com sucesso' });
+      
+          // Resposta de sucesso
+          return res.status(200).json({ success: true, message: 'Senha atualizada com sucesso.' });
         } catch (error) {
           console.error('Erro ao atualizar senha:', error);
-          return res.status(500).json({ error: 'Erro interno do servidor' });
+          return res.status(500).json({ error: 'Erro interno do servidor.' });
         }
-      }
+      }      
 }
 
 module.exports = new UserApi();

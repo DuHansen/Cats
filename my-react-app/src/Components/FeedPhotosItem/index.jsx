@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { DELETE_POSTAGEM, EDITAR_POSTAGEM } from '../../api/cats';
+import UserContext from '../../context/UserContext';
 import Image from '../Image';
 import './style.css';
 
-function FeedPhotosItem({ photo, onDelete, onUpdate, setModalPhoto }) {
+function FeedPhotosItem({ photo, onDelete, onUpdate }) {
   const token = window.localStorage.getItem('token');
   const [isEditing, setIsEditing] = useState(false);
   const [editedPhoto, setEditedPhoto] = useState({ ...photo });
+  const { data } = useContext(UserContext); // Contexto do usuário
 
   async function handleClickDeletar() {
     if (window.confirm('Tem certeza que deseja deletar esta imagem?')) {
       const { url, options } = DELETE_POSTAGEM(token, photo.id);
-      
+
       try {
         const response = await fetch(url, options);
         if (response.ok) {
@@ -41,28 +43,32 @@ function FeedPhotosItem({ photo, onDelete, onUpdate, setModalPhoto }) {
 
   async function handleSave() {
     const { url, options } = EDITAR_POSTAGEM(token, photo.id);
-    options.body = JSON.stringify(editedPhoto); // Adicione os dados do gato aqui
+    options.body = JSON.stringify(editedPhoto);
 
     try {
-        const response = await fetch(url, options);
-        if (response.ok) {
-            alert('Imagem editada com sucesso!');
-            setIsEditing(false);
-            onUpdate(editedPhoto); // Chama a função de atualização após editar
-        } else {
-            const errorData = await response.json(); // Obtém os detalhes do erro
-            alert(`Erro ao editar a imagem: ${errorData.error}`);
-        }
+      const response = await fetch(url, options);
+      if (response.ok) {
+        alert('Imagem editada com sucesso!');
+        setIsEditing(false);
+        onUpdate(editedPhoto);
+      } else {
+        const errorData = await response.json();
+        alert(`Erro ao editar a imagem: ${errorData.error}`);
+      }
     } catch (error) {
-        console.error('Erro:', error);
-        alert('Erro ao tentar editar a imagem. Tente novamente mais tarde.');
+      console.error('Erro:', error);
+      alert('Erro ao tentar editar a imagem. Tente novamente mais tarde.');
     }
-}
-
+  }
 
   if (!photo || !photo.url) {
     return null;
   }
+
+  const hasData = photo.nome || photo.descricao || photo.origem || photo.temperamento || 
+                  photo.nivel_energia || photo.vida_media || photo.adaptabilidade || photo.inteligencia;
+
+  const isAdmin = data?.user?.role === 'admin'; // Verifica se é admin
 
   return (
     <li className="StyledFeedPhotosItem">
@@ -70,32 +76,44 @@ function FeedPhotosItem({ photo, onDelete, onUpdate, setModalPhoto }) {
       <div className="photo-info">
         {isEditing ? (
           <div className="edit-container">
-            <input type="text" name="nome" value={editedPhoto.nome} onChange={handleChange} placeholder="Nome" className="edit-input" />
-            <input type="text" name="descricao" value={editedPhoto.descricao} onChange={handleChange} placeholder="Descrição" className="edit-input" />
-            <input type="text" name="origem" value={editedPhoto.origem} onChange={handleChange} placeholder="Origem" className="edit-input" />
-            <input type="text" name="temperamento" value={editedPhoto.temperamento} onChange={handleChange} placeholder="Temperamento" className="edit-input" />
-            <input type="text" name="nivel_energia" value={editedPhoto.nivel_energia} onChange={handleChange} placeholder="Nível de Energia" className="edit-input" />
-            <input type="text" name="vida_media" value={editedPhoto.vida_media} onChange={handleChange} placeholder="Vida Média" className="edit-input" />
-            <input type="text" name="adaptabilidade" value={editedPhoto.adaptabilidade} onChange={handleChange} placeholder="Adaptabilidade" className="edit-input" />
-            <input type="text" name="inteligencia" value={editedPhoto.inteligencia} onChange={handleChange} placeholder="Inteligência" className="edit-input" />
+            {Object.keys(editedPhoto).map((key) => (
+              key !== 'id' && key !== 'url' && (
+                <input
+                  key={key}
+                  type="text"
+                  name={key}
+                  value={editedPhoto[key]}
+                  onChange={handleChange}
+                  placeholder={key.charAt(0).toUpperCase() + key.slice(1).replace('_', ' ')}
+                  className="edit-input"
+                />
+              )
+            ))}
             <button className="save-button" onClick={handleSave}>Salvar</button>
           </div>
         ) : (
           <>
-            <h3 className="photo-name">{photo.nome || 'Nome desconhecido'}</h3>
-            <p className="photo-description"><strong>Descrição:</strong> {photo.descricao || 'Sem descrição'}</p>
-            <p><strong>Origem:</strong> {photo.origem || 'Desconhecida'}</p>
-            <p><strong>Temperamento:</strong> {photo.temperamento || 'Desconhecido'}</p>
-            <p><strong>Nível de Energia:</strong> {photo.nivel_energia || 'Desconhecido'}</p>
-            <p><strong>Vida Média:</strong> {photo.vida_media || 'Desconhecida'}</p>
-            <p><strong>Adaptabilidade:</strong> {photo.adaptabilidade || 'Desconhecida'}</p>
-            <p><strong>Inteligência:</strong> {photo.inteligencia || 'Desconhecida'}</p>
+            {hasData && (
+              <>
+                {photo.nome && <h3 className="photo-name">{photo.nome}</h3>}
+                {photo.descricao && <p><strong>Descrição:</strong> {photo.descricao}</p>}
+                {photo.origem && <p><strong>Origem:</strong> {photo.origem}</p>}
+                {photo.temperamento && <p><strong>Temperamento:</strong> {photo.temperamento}</p>}
+                {photo.nivel_energia && <p><strong>Nível de Energia:</strong> {photo.nivel_energia}</p>}
+                {photo.vida_media && <p><strong>Vida Média:</strong> {photo.vida_media}</p>}
+                {photo.adaptabilidade && <p><strong>Adaptabilidade:</strong> {photo.adaptabilidade}</p>}
+                {photo.inteligencia && <p><strong>Inteligência:</strong> {photo.inteligencia}</p>}
+              </>
+            )}
           </>
         )}
-        <div className='botoes'>
-          <button className="deletar" onClick={handleClickDeletar}>Deletar</button>
-          <button className="editar" onClick={handleClickEditar}>{isEditing ? 'Cancelar' : 'Editar'}</button>
-        </div>
+
+        {isAdmin && (
+          <div className="botoes">
+            <button className="deletar" onClick={handleClickDeletar}>Deletar</button>
+            <button className="editar" onClick={handleClickEditar}>{isEditing ? 'Cancelar' : 'Editar'}</button>
+          </div>
+        )}
       </div>
     </li>
   );

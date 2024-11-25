@@ -24,36 +24,37 @@ function UserHeaderNav() {
 
   return (
     <>
-      {mobile && (
-        <button
-          aria-label="Menu"
-          className={`mobile-button ${mobileMenu ? 'active' : ''}`}
-          onClick={() => setMobileMenu(!mobileMenu)}
-        ></button>
+    {mobile && (
+      <button
+        aria-label="Menu"
+        className={`mobile-button ${mobileMenu ? 'active' : ''}`}
+        onClick={() => setMobileMenu(!mobileMenu)}
+      ></button>
+    )}
+    <nav className={`StyledHeaderUserNav ${mobile ? 'mobile' : ''} ${mobileMenu ? 'active' : ''}`}>
+      <NavLink to="/conta" end>
+        <img src="/src/Assets/feed.svg" alt="Minhas Fotos" />
+        {mobile && 'Meus gatos'}
+      </NavLink>
+      {data && data.user.role === 'admin' && (
+        <>
+          <NavLink to="/conta/usuarios">
+            <img src="/src/Assets/usuarios.svg" alt="Usuários" />
+            {mobile && 'Usuários'}
+          </NavLink>
+          <NavLink to="/conta/postar">
+            <img src="/src/Assets/adicionar.svg" alt="Adicionar Foto" />
+            {mobile && 'Postar'}
+          </NavLink>
+        </>
       )}
-      <nav className={`StyledHeaderUserNav ${mobile ? 'mobile' : ''} ${mobileMenu ? 'active' : ''}`}>
-        <NavLink to="/conta" end>
-          <img src="/src/Assets/feed.svg" alt="Minhas Fotos" />
-          {mobile && 'Meus gatos'}
-        </NavLink>
-        {data && data.user.role === 'admin' && ( 
-          <>
-            <NavLink to="/conta/usuarios">
-              <img src="/src/Assets/usuarios.svg" alt="Usuários" />
-              {mobile && 'Usuários'}
-            </NavLink>
-            <NavLink to="/conta/postar">
-              <img src="/src/Assets/adicionar.svg" alt="Adicionar Foto" />
-              {mobile && 'Postar'}
-            </NavLink>
-          </>
-        )}
-        <button onClick={handleLogout} aria-label="Sair" className="logout-button">
-          <img src="/src/Assets/sair.svg" alt="Sair" />
-          {mobile && 'Sair'}
-        </button>
-      </nav>
-    </>
+      {/* Ícone de logout */}
+      <button onClick={handleLogout} aria-label="Sair" className="logout-button">
+        <img src="/src/Assets/sair.svg" alt="Sair" />
+        {mobile && 'Sair'}
+      </button>
+    </nav>
+  </>
   );
 }
 

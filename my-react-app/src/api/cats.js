@@ -24,7 +24,7 @@ export function GET_CATS(token) {
 }
 
 export function DELETE_POSTAGEM(token, id) {
-  const url = `${MY_URL}/${id}`;
+  const url = `${MY_URL}${id}`;
   const options = {
     method: 'DELETE',
     headers: {
@@ -41,7 +41,25 @@ export function EDITAR_POSTAGEM(token, id) {
     headers: {
       Authorization: `Bearer ${token}`, 
       'Content-Type': 'application/json', 
-    },
+    }
   };
   return { url, options };
 }
+
+
+export const CRIAR_POSTAGEM = (token, postData) => {
+  const url = `${MY_URL}criar`; 
+  const options = {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',  // Indica que o corpo da requisição é JSON
+    },
+    body: JSON.stringify(postData), // Converte o objeto para JSON
+  };
+  return { url, options };
+};
+
+
+
+

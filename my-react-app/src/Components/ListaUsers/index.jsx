@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
+import * as XLSX from 'xlsx';
 import { add_admin, add_view, bloq_users, delete_users, desbloq_users, edit_users } from '../../api/user';
 import ModelAdd from '../AddUser';
 import ModalBloquear from '../BloqueUser';
@@ -12,7 +13,6 @@ function ListaUsers({ data }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('');
-
   const [showModal, setShowModal] = useState(null); 
   const [userToEdit, setUserToEdit] = useState(null);
   const [userToBlock, setUserToBlock] = useState(null);
@@ -26,6 +26,13 @@ function ListaUsers({ data }) {
     setUserToBlock(null); 
   };
 
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(filteredData); // Converte os dados em uma planilha
+    const wb = XLSX.utils.book_new(); // Cria um novo livro
+    XLSX.utils.book_append_sheet(wb, ws, 'Usuários'); // Adiciona a planilha ao livro
+    XLSX.writeFile(wb, 'usuarios.xlsx'); // Gera o arquivo e inicia o download
+  };
+  
   const handleShowEdit = (user) => {
     setUserToEdit(user);
     setShowModal('edit'); // Mostrar o modal de edição
@@ -41,25 +48,21 @@ function ListaUsers({ data }) {
     setShowModal('delete'); // Mostrar o modal de exclusão
   };
 
-  const handleShowAdd = () => {
-    setUserToAdd(null); // Definir userToAdd como null ou um objeto vazio
-    setShowModal('add'); // Mostrar o modal de adicionar
-  };
-  
-  
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  const handleAddUser = (role, userData) => {
-    if (role === 'admin') {
-      add_admin_user(userData);  // Passa o userData (com ID) para a função de adicionar como admin
-    } else {
-      add_view_user(userData);  // Passa o userData (com ID) para a função de adicionar como view
-    }
+  const handleShowAdd = () => {
+    setShowDropdown((prev) => !prev); // Alterna a exibição do dropdown
   };
-  
-  
-  const handleShowExp = (user) => {
-    setUserToExp(user); // Usando o estado de edição para excluir
-    setShowModal('delete'); // Mostrar o modal de exclusão
+
+  const handleOptionClick = (option) => {
+    if (option === "Admin") {
+      setUserToAdd(null); // Limpa o valor, caso seja necessário
+      setShowModal("addAdmin");
+    } else if (option === "View") {
+      setUserToAdd(null); // Limpa o valor, caso seja necessário
+      setShowModal("addView");
+    }
+    setShowDropdown(false); // Fecha o dropdown
   };
 
   const handleBloquearUser = async (id) => {
@@ -174,7 +177,33 @@ function ListaUsers({ data }) {
     }
   };
   
-// Função para adicionar um usuário como "view"
+
+  const add_admin_user = async (userData) => {
+    const token = localStorage.getItem('token');
+  
+    if (!token) {
+      console.error('Token de autenticação não encontrado.');
+      return;
+    }
+  
+    const { name, email, password } = userData;
+    const { url, options } = add_admin(token, { name, email, password }); // Enviando nome, email e senha
+  
+    try {
+      const response = await fetch(url, options);
+      if (response.ok) {
+        console.log(`Usuário ${name} adicionado como admin com sucesso.`);
+      } else {
+        const errorResponse = await response.json();
+        console.error('Erro ao adicionar usuário como admin:', errorResponse);
+      }
+    } catch (error) {
+      console.error('Erro ao conectar com a API:', error);
+    }
+  };
+  
+
+
 const add_view_user = async (userData) => {
   const token = localStorage.getItem('token');
 
@@ -183,41 +212,16 @@ const add_view_user = async (userData) => {
     return;
   }
 
-  // Agora passamos o id e outros dados necessários para a API
-  const { id } = userData;
-  const { url, options } = add_view(token, id);
+  const { name, email, password } = userData;
+  const { url, options } = add_view(token, { name, email, password }); // Enviando nome, email e senha
 
   try {
     const response = await fetch(url, options);
     if (response.ok) {
-      console.log(`Usuário com ID ${id} adicionado como view com sucesso.`);
+      console.log(`Usuário ${name} adicionado como view com sucesso.`);
     } else {
-      console.error('Erro ao adicionar usuário como view:', await response.json());
-    }
-  } catch (error) {
-    console.error('Erro ao conectar com a API:', error);
-  }
-};
-
-// Função para adicionar um usuário como "admin"
-const add_admin_user = async (userData) => {
-  const token = localStorage.getItem('token');
-
-  if (!token) {
-    console.error('Token de autenticação não encontrado.');
-    return;
-  }
-
-  // Passamos o id do usuário como argumento para a API
-  const { id } = userData;
-  const { url, options } = add_admin(token, id);
-
-  try {
-    const response = await fetch(url, options);
-    if (response.ok) {
-      console.log(`Usuário com ID ${id} adicionado como admin com sucesso.`);
-    } else {
-      console.error('Erro ao adicionar usuário como admin:', await response.json());
+      const errorResponse = await response.json();
+      console.error('Erro ao adicionar usuário como view:', errorResponse);
     }
   } catch (error) {
     console.error('Erro ao conectar com a API:', error);
@@ -243,10 +247,24 @@ const add_admin_user = async (userData) => {
 
   return (
     <section className="StyledListaUsers">
-      <div className="botoes">
-        <button className="StyledExp" onClick={() => handleShowExp(user)}>Exportar xlsx</button>
-        <button className="StyledAdd" onClick={() => handleShowAdd()}>Adicionar</button>
+  <div className="botoes">
+  <button className="StyledExp" onClick={exportToExcel}>
+          Exportar XLSX
+  </button>
+  <div className="relative">
+    <button className="StyledAdd" onClick={handleShowAdd}>
+      Adicionar
+    </button>
+    {showDropdown && (
+      <div className="absolute">
+        <ul>
+          <li onClick={() => handleOptionClick("Admin")}>Admin</li>
+          <li onClick={() => handleOptionClick("View")}>View</li>
+        </ul>
       </div>
+    )}
+  </div>
+  </div>
       <div className="search-form-wrapper">
         <div className="search-form">
           <input
@@ -353,12 +371,22 @@ const add_admin_user = async (userData) => {
         userToBlock={userToBlock}
       />
 )}
-    {showModal === 'add' && (
+  {showModal === 'addAdmin' && (
   <ModelAdd
-    show={showModal === 'add'}
+    show={showModal === 'addAdmin'}
     handleClose={handleClose}
-    handleAddUser={handleAddUser}
-    userToAdd={userToAdd}
+    handleAddUser={(userData) => add_admin_user(userData)}
+    userToAdd={userToAdd} // Pode ser null ou definido
+  />
+)}
+
+{/* Modal para adicionar View */}
+{showModal === 'addView' && (
+  <ModelAdd
+    show={showModal === 'addView'}
+    handleClose={handleClose}
+    handleAddUser={(userData) => add_view_user(userData)}
+    userToAdd={userToAdd} // Pode ser null ou definido
   />
 )}
     </section>
