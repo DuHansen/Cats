@@ -72,7 +72,7 @@ function FeedPhotos({ setModalPhoto }) {
 
   return (
     <div className="feed-photos-container">
-      <ul className="feed-photos-list">
+      <div className="feed-photos-list">
         {photos.map((photo) => (
           <FeedPhotosItem
             photo={photo}
@@ -83,7 +83,7 @@ function FeedPhotos({ setModalPhoto }) {
           />
         ))}
         {loading && <Loading />}
-      </ul>
+      </div>
     </div>
   );
 }

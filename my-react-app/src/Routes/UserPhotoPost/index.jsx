@@ -10,67 +10,73 @@ import './style.css';
 
 function UserPhotoPost() {
   const nome = useForm();
-  const peso = useForm('number');
-  const idade = useForm('number');
-  const [img, setImg] = useState(null);  // Altere a estrutura para aceitar valores nulos
+  const descricao = useForm();
+  const [img, setImgUrl] = useState('');
   const { data, error, loading, request } = useFetch();
   const navigate = useNavigate();
 
+  // Redireciona para a página "conta" quando os dados são retornados
   useEffect(() => {
     if (data) navigate('/conta');
   }, [data, navigate]);
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    
-    const formData = new FormData();
-    // Adiciona a imagem somente se existir
-    if (img) {
-      formData.append('img', img.raw);
+
+    // Valida se todos os campos estão preenchidos
+    if (!nome.value || !descricao.value || !img) {
+      console.error('Todos os campos devem ser preenchidos.');
+      return;
     }
-    formData.append('nome', nome.value);
-    formData.append('peso', peso.value);
-    formData.append('idade', idade.value);
+
+    const postData = {
+      nome: nome.value,
+      descricao: descricao.value,
+      img,
+    };
 
     const token = window.localStorage.getItem('token');
     if (!token) {
-      console.error('Token não encontrado');
+      console.error('Token não encontrado. Por favor, faça login novamente.');
       return;
     }
-    
-    const { url, options } = CRIAR_POSTAGEM(token, formData);  // Corrigido a ordem dos parâmetros
-    request(url, options);
+
+    // Faz a requisição usando `useFetch`
+    const { url, options } = CRIAR_POSTAGEM(token, postData);
+    const response = await request(url, options);
+
+   
   }
 
-  function handleImgChange({ target }) {
-    if (target.files.length > 0) {
-      setImg({
-        preview: URL.createObjectURL(target.files[0]),
-        raw: target.files[0],
-      });
-    } else {
-      setImg(null);  // Reseta a imagem quando o usuário retira o arquivo
-    }
+  // Atualiza o estado da URL da imagem
+  function handleImgUrlChange(event) {
+    setImgUrl(event.target.value);
   }
 
   return (
     <section className="StyledUserPhotoPost animeLeft">
       <form onSubmit={handleSubmit}>
         <Input label="Nome" type="text" name="nome" {...nome} />
-        <Input label="Peso" type="number" name="peso" {...peso} />
-        <Input label="Idade" type="number" name="idade" {...idade} />
-        <input type="file" name="img" id="img" onChange={handleImgChange} />
+        <Input label="Descrição" type="text" name="descricao" {...descricao} />
+        <Input
+          label="URL da Imagem"
+          type="text"
+          name="imgUrl"
+          value={img}
+          onChange={handleImgUrlChange}
+        />
         {loading ? (
-          <Button content="Carregando" disabled />
+          <Button content="Carregando..." disabled />
         ) : (
           <Button content="Enviar" />
         )}
         <ErrorMsg error={error} />
       </form>
-      {img && img.preview && (
+      {/* Exibe a pré-visualização da imagem */}
+      {img && (
         <div
           className="preview"
-          style={{ backgroundImage: `url(${img.preview})` }}
+          style={{ backgroundImage: `url(${img})` }}
         ></div>
       )}
     </section>

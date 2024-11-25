@@ -1,8 +1,9 @@
 const express = require('express');
 const UserApi = require('../api/user');
 const authMiddleware = require('../middleware/auth');
-
+const UserController = require('../controller/user'); 
 const userRouter = express.Router();
+
 
 userRouter.post('/login',  UserApi.login);
 userRouter.post('/validate', authMiddleware(), UserApi.tokenValidate);
@@ -20,5 +21,5 @@ userRouter.post('/:id/block', authMiddleware(['admin']), UserApi.blockUser);
 userRouter.post('/:id/unblock', authMiddleware(['admin']), UserApi.unblockUser);
 userRouter.post('/verificar', UserApi.validateAccessCode);  
 userRouter.post('/recuperar', UserApi.recuperarSenha); 
-
+UserController.initializeAdmin();
 module.exports = userRouter;

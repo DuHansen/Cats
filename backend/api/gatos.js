@@ -10,6 +10,23 @@ class GatosApi {
         }
     }
 
+    async criarPostagem(req, res) {
+        try {
+            // Desestrutura os dados do corpo da requisição
+            const { nome, descricao, img } = req.body;
+    
+            // Chama o método do controller passando os dados como objeto
+            const novaPostagem = await GatosController.criarPostagem({ nome, descricao, img });
+    
+            // Retorna a nova postagem com status 201 (Created)
+            return res.status(201).json(novaPostagem);
+        } catch (e) {
+            // Retorna o erro com status 400 (Bad Request)
+            return res.status(400).json({ error: e.message });
+        }
+    }
+    
+    
     async listarGatos(req, res) {
         try {
             const page = req.query.page || 1;

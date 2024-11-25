@@ -134,7 +134,7 @@ export const delete_users = (token, id) => {
   }
 }
 
-export const recuperar_senha = (body) => {
+export const enviar_code = (email) => {
   return {
     url: `${API_URL}recuperar`,
     options: {
@@ -142,12 +142,12 @@ export const recuperar_senha = (body) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(email)
     },
   }
 }
 
-export const verificar_senha = (body) => {
+export const verificar_code = ({ email, codigoAcesso }) => {
   return {
     url: `${API_URL}verificar`,
     options: {
@@ -155,7 +155,7 @@ export const verificar_senha = (body) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify({ email, codigoAcesso })
     },
   }
 }

@@ -24,22 +24,36 @@ function LoginPasswordReset() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     if (password.validate()) {
       const { url, options } = atualizar_senha({
         login,
         key,
         password: password.value,
       });
-
+  
       try {
-        const { response } = await request(url, options);
-        if (response.ok) navigate('/login'); // Redireciona para login
-      } catch {
-        console.error('Erro ao redefinir a senha.');
+        const { response, json } = await request(url, options); // Use o retorno do hook
+  
+        if (response.ok) {
+          if (json?.success) {
+            alert(json.message || 'Senha redefinida com sucesso!');
+            navigate('/login'); // Redireciona para a página de login
+          } else {
+            alert('Erro inesperado ao redefinir a senha.');
+          }
+        } else {
+          alert(json?.error || 'Erro ao redefinir a senha.');
+        }
+      } catch (err) {
+        console.error('Erro ao redefinir a senha:', err);
+        alert('Erro na conexão com o servidor.');
       }
     }
   };
+  
+  
+  
 
   return (
     <section className="animeLeft">

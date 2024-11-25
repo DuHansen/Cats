@@ -195,6 +195,18 @@
   visibility: visible;
 }
 
+@media (max-width: 768px) {
+  .icon {
+    margin: 0 8px;
+  }
+
+  .icon[title]:hover::after {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+}
+
+
 .StyledBuscar {
   font-size: 1rem;
   font-family: var(--type-first);

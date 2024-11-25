@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import FeedPhotos from '../FeedPhotos';
+import "./style.css";
 
 function Feed() {
   const [page, setPage] = useState(1);
@@ -14,7 +15,7 @@ function Feed() {
   }
 
   return (
-    <div>
+    <div className='containerhome'>
       <FeedPhotos
         page={page}
         setModalPhoto={setModalPhoto}

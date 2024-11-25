@@ -9,7 +9,7 @@
 .feed-photos-list {
   display: flex; /* Usar flexbox para garantir que cada item seja uma linha */
   flex-direction: column; /* Cada item em uma nova linha */
-  gap: 20px; /* Espaçamento entre os itens */
+  justify-content: center;
   align-items: center; /* Centraliza os itens na horizontal */
 }
 
@@ -40,9 +40,4 @@
   background-color: #f9f9f9; /* Fundo levemente cinza para contraste */
 }
 
-@media (max-width: 768px) {
-  /* Ajustes adicionais, se necessário */
-  .feed-photos-list {
-    gap: 15px; /* Ajuste de gap em telas menores */
-  }
-}
+
