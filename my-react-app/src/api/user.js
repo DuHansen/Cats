@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api/v1/user/';
+const API_URL = 'https://cats-api-tagname.onrender.com/api/v1/user/';
 
 export async function tokenValidate(token) {
   return {

@@ -1,6 +1,6 @@
 // src/api/api.js
 const API_URL = 'https://api.thecatapi.com/v1';
-const MY_URL = 'http://localhost:3000/api/v1/gatos/';
+const MY_URL = 'https://cats-api-tagname.onrender.com/api/v1/gatos/';
 
 export function fetchCatImages(page, limit) {
   const url = `${API_URL}/images/search?limit=${limit}&page=${page}`;
