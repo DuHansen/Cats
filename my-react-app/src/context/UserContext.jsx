@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginUser, userGet } from '../api/user';
+import { loginUser, tokenValidate, userGet } from '../api/user';
 
 export const UserContext = createContext();
 
@@ -57,6 +57,9 @@ export const UserStorage = ({ children }) => {
         try {
           setError(null);
           setLoading(true);
+          const { url, options } = tokenValidate(token);
+          const response = await fetch(url, options);
+          if (!response.ok) throw new Error('Token inválido!');
           await getUser(token);
         } catch (e) {
           userLogout();
