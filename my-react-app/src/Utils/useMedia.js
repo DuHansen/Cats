@@ -1,21 +1,29 @@
 import { useEffect, useState } from 'react';
 
 const useMedia = (media) => {
-  const [match, setMatch] = useState(null);
+  const [match, setMatch] = useState(false); // Inicializado com false
 
   useEffect(() => {
-    function changeMatch() {
-      const { matches } = window.matchMedia(media);
-      setMatch(matches)
-    }
-    changeMatch()
-    window.addEventListener('resize', changeMatch);
-    return () => {
-      window.removeEventListener('resize', changeMatch);
+    const mediaQueryList = window.matchMedia(media);
+    
+    // Função para atualizar o estado com base na consulta de mídia
+    const changeMatch = () => {
+      setMatch(mediaQueryList.matches);
     };
-  }, [media]);
 
-  return match;
+    // Executa a função inicialmente
+    changeMatch();
+
+    // Adiciona o listener para mudanças na mídia
+    mediaQueryList.addListener(changeMatch);
+
+    // Cleanup para remover o listener quando o componente for desmontado
+    return () => {
+      mediaQueryList.removeListener(changeMatch);
+    };
+  }, [media]); // Reexecuta o efeito apenas quando a string `media` mudar
+
+  return match; // Retorna o estado, verdadeiro ou falso
 };
 
 export default useMedia;
