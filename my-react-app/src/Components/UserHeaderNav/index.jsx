@@ -4,6 +4,12 @@ import UserContext from '../../context/UserContext'; // Certifique-se de que o c
 import useMedia from '../../Utils/useMedia';
 import './style.css'; // Importa o CSS
 
+// Importação de imagens
+import addPhotoIcon from '@/Assets/adicionar.svg';
+import feedIcon from '@/Assets/feed.svg';
+import logoutIcon from '@/Assets/sair.svg';
+import usersIcon from '@/Assets/usuarios.svg';
+
 function UserHeaderNav() {
   const { data, userLogout } = useContext(UserContext); // Verifique se userLogout está disponível aqui
   const navigate = useNavigate();
@@ -24,37 +30,37 @@ function UserHeaderNav() {
 
   return (
     <>
-    {mobile && (
-      <button
-        aria-label="Menu"
-        className={`mobile-button ${mobileMenu ? 'active' : ''}`}
-        onClick={() => setMobileMenu(!mobileMenu)}
-      ></button>
-    )}
-    <nav className={`StyledHeaderUserNav ${mobile ? 'mobile' : ''} ${mobileMenu ? 'active' : ''}`}>
-      <NavLink to="/conta" end>
-        <img src="/src/Assets/feed.svg" alt="Minhas Fotos" />
-        {mobile && 'Meus gatos'}
-      </NavLink>
-      {data && data.user.role === 'admin' && (
-        <>
-          <NavLink to="/conta/usuarios">
-            <img src="/src/Assets/usuarios.svg" alt="Usuários" />
-            {mobile && 'Usuários'}
-          </NavLink>
-          <NavLink to="/conta/postar">
-            <img src="/src/Assets/adicionar.svg" alt="Adicionar Foto" />
-            {mobile && 'Postar'}
-          </NavLink>
-        </>
+      {mobile && (
+        <button
+          aria-label="Menu"
+          className={`mobile-button ${mobileMenu ? 'active' : ''}`}
+          onClick={() => setMobileMenu(!mobileMenu)}
+        ></button>
       )}
-      {/* Ícone de logout */}
-      <button onClick={handleLogout} aria-label="Sair" className="logout-button">
-        <img src="/src/Assets/sair.svg" alt="Sair" />
-        {mobile && 'Sair'}
-      </button>
-    </nav>
-  </>
+      <nav className={`StyledHeaderUserNav ${mobile ? 'mobile' : ''} ${mobileMenu ? 'active' : ''}`}>
+        <NavLink to="/conta" end>
+          <img src={feedIcon} alt="Minhas Fotos" />
+          {mobile && 'Meus gatos'}
+        </NavLink>
+        {data && data.user.role === 'admin' && (
+          <>
+            <NavLink to="/conta/usuarios">
+              <img src={usersIcon} alt="Usuários" />
+              {mobile && 'Usuários'}
+            </NavLink>
+            <NavLink to="/conta/postar">
+              <img src={addPhotoIcon} alt="Adicionar Foto" />
+              {mobile && 'Postar'}
+            </NavLink>
+          </>
+        )}
+        {/* Ícone de logout */}
+        <button onClick={handleLogout} aria-label="Sair" className="logout-button">
+          <img src={logoutIcon} alt="Sair" />
+          {mobile && 'Sair'}
+        </button>
+      </nav>
+    </>
   );
 }
 
