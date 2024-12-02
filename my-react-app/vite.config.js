@@ -3,22 +3,26 @@ import { defineConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
 
 export default defineConfig({
-  base: './', 
+  base: '/', // Use '/' para Vercel, ou configure se o projeto estiver em um subdiretório
   plugins: [
     react(),
-    svgr(), 
+    svgr({
+      svgrOptions: {
+        icon: true, // Permite que SVGs sejam tratados como ícones
+      },
+    }),
   ],
   server: {
-    historyApiFallback: true, // Redireciona requisições desconhecidas para o index.html
+    historyApiFallback: true, // Garante redirecionamento para SPA
   },
   build: {
     rollupOptions: {
-      input: 'index.html', // Garante que o ponto de entrada seja o index.html
+      input: 'index.html', // Certifica-se de que o ponto de entrada é o index.html
     },
   },
   resolve: {
     alias: {
-      // Se necessário, defina aliases para módulos
+      '@': '/src', // Facilita importações de módulos dentro de `src`
     },
   },
 });
