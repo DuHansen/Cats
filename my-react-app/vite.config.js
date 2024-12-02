@@ -7,4 +7,17 @@ export default defineConfig({
     react(),
     svgr(), 
   ],
+  server: {
+    historyApiFallback: true, // Redireciona requisições desconhecidas para o index.html
+  },
+  build: {
+    rollupOptions: {
+      input: 'index.html', // Garante que o ponto de entrada seja o index.html
+    },
+  },
+  resolve: {
+    alias: {
+      // Se necessário, defina aliases para módulos
+    },
+  },
 });
