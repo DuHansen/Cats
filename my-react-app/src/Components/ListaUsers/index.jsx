@@ -1,3 +1,6 @@
+import bloquearIcon from '@/Assets/bloquear.svg';
+import editarIcon from '@/Assets/editar.svg';
+import excluirIcon from '@/Assets/excluir.svg';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import * as XLSX from 'xlsx';
@@ -7,6 +10,7 @@ import ModalBloquear from '../BloqueUser';
 import EditarUser from '../EditarUser';
 import ModalExcluir from '../ExcluirUser';
 import './style.css';
+
 
 function ListaUsers({ data }) {
   const [filteredData, setFilteredData] = useState(data);
@@ -309,7 +313,7 @@ const add_view_user = async (userData) => {
               <td>{user.isBlocked ? 'Sim' : 'Não'}</td>
               <td>
                 <img 
-                  src="/src/Assets/excluir.svg" 
+                  src={excluirIcon}
                   alt="Excluir" 
                   title="Excluir usuário" 
                   className="icon" 
@@ -318,7 +322,7 @@ const add_view_user = async (userData) => {
               </td>
               <td>
                 <img 
-                  src="/src/Assets/editar.svg" 
+                  src={editarIcon} 
                   alt="Editar" 
                   title="Editar usuário" 
                   className="icon" 
@@ -327,7 +331,7 @@ const add_view_user = async (userData) => {
               </td>
               <td>
                 <img 
-                  src="/src/Assets/bloquear.svg" 
+                  src={bloquearIcon} 
                   alt="Bloquear" 
                   title="Bloquear usuário" 
                   className="icon" 
